@@ -1,0 +1,29 @@
+[project]
+name = "python-template"
+version = "0.1.0"
+description = "Python template project."
+readme = "README.md"
+authors = [
+    { name = "Robert Ernst", email = "r.f.ernst-3@umcutrecht.nl" }
+]
+requires-python = "~=3.13.0"
+dependencies = [
+    "typer>=0.20.0",
+]
+
+[project.scripts]
+python-template = "python_template.cli:cli"
+
+[build-system]
+requires = ["uv_build>=0.8.22,<0.9.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.14.2",
+]
+
+[tool.ruff]
+line-length = 127
