@@ -1,4 +1,4 @@
-from python_template import cli
+import HammingDistanceCalculator
 
 
 def test_get_hello_msg():
