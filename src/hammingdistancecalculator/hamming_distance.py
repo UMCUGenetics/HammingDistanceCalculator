@@ -87,15 +87,21 @@ def is_valid_input_csv(csv_file: Path) -> bool:
         # expect the first line to be the header
         all_lines = file_handle.readlines()
 
-        headerline = all_lines[0].strip()
+        headerline = all_lines[0].strip().lower()
         bodylines = all_lines[1:]
 
         if headerline != 'label,barcode':
             raise ValueError(f"Expected header with 'label, barcode', but found {headerline}")
 
         for row_values in bodylines:
-            potential_label = str(row_values.split(',')[0])
-            potential_sequence = str(row_values.split(',')[1].upper())
+            line = row_values.split(',')
+            # check number of elements per line
+            print(f"line: {line}")
+            if len(line) > 2:
+                raise ValueError(f"Line {line} has too many elements, 2 expected.")
+
+            potential_label = str(line[0])
+            potential_sequence = str(line[1].upper())
 
             # check for empty lines
             if potential_label == "":
