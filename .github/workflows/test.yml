@@ -7,14 +7,13 @@ on:
   pull_request:
   workflow_dispatch:
 
-
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   pytest:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
 
     steps:
       - name: Check out repository
