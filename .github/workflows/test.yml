@@ -40,10 +40,7 @@ jobs:
 
       - name: Add test coverage comment
         # Only comment on events from the same repository (skip forked PRs)
-        if: >
-          (github.event_name == 'pull_request' &&
-           github.event.pull_request.head.repo.full_name == github.repository)
-          || (github.event_name == 'push')
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
 
         # Alternative for open source projects: https://github.com/codecov/example-python
         uses: MishaKav/pytest-coverage-comment@main
