@@ -3,7 +3,9 @@ from hammingdistancecalculator.hamming_distance import (
     hamming_distance,
     is_valid_dna,
     rev_comp,
-    is_valid_input_csv
+    is_valid_input_csv,
+    load_barcodes,
+    compare_sample_barcode_list
 )
 
 # test hamming distance function
@@ -70,3 +72,93 @@ def test_is_valid_input_csv():
 
     with pytest.raises(ValueError, match=f"has too many elements, 2 expected\.$"):
         is_valid_input_csv(bad_file)
+
+
+# test load_barcodes
+def test_load_barcodes_correct(tmp_path):
+    test_file = tmp_path / 'barcodes.csv'
+    test_file.write_text("label,barcode\n"
+                         "S1,ACTG\n"
+                         "S2,TTTT",
+                         encoding="utf-8")
+
+    test_barcodes = load_barcodes(test_file)
+    assert test_barcodes == [("S1", "ACTG"),("S2", "TTTT")]
+
+
+def test_load_barcodes_strips_whitespace(tmp_path):
+    test_file2 = tmp_path / 'barcodes2.csv'
+    test_file2.write_text("label,barcode\n"
+                          "S1,ACTG      \n"
+                          "S2,TTTT    ",
+                          encoding="utf-8")
+
+    test_barcodes2 = load_barcodes(test_file2)
+    assert test_barcodes2 == [("S1", "ACTG"), ("S2", "TTTT")]
+
+
+def test_load_barcodes_invalid_csv_raises_exception(tmp_path):
+    test_file3 = tmp_path / 'barcodes2.csv'
+    test_file3.write_text("label,barcode\n"
+                          "S1,ACXX\n"
+                          "S2,",
+                          encoding="utf-8")
+
+    # invalid second row should throw a value error (but from is_valid_input_csv as its triggered first)
+    with pytest.raises(ValueError, match=f"^Invalid DNA-letters found in label "):
+        load_barcodes(test_file3)
+
+
+# test compare_sample_barcode_list
+def test_compare_sample_barcode_list_with_mocked_tpqm(mocker):
+    test_set = [
+        ("S1", "ACTG"),
+        ("S2", "ACCG"),
+        ("S3", "TTTT")
+    ]
+
+    # Create a mock object that behaves like a tqdm context manager
+    progress_mock = mocker.MagicMock()
+    tqdm_mock = mocker.MagicMock()
+    tqdm_mock.return_value = progress_mock
+#    tqdm_mock.return_value.__enter__.return_value = progress_mock
+
+    # patch the function we want to mock
+    mocker.patch("hammingdistancecalculator.hamming_distance.tqdm", tqdm_mock)
+
+    # store the return function so we can compare to the expected values
+    return_value = compare_sample_barcode_list(test_set)
+
+    #
+    # # compare expected keys to return value
+    # expected_keys = {
+    #     "S1_vs_S2",
+    #     "S1_vs_revcomp_S2",
+    #     "S1_vs_S3",
+    #     "S1_vs_revcomp_S3",
+    #     "S2_vs_S3",
+    #     "S2_vs_revcomp_S3"
+    # }
+    #
+    # # check the keys are correct
+    # assert set(return_value.keys()) == expected_keys
+
+    # compare expected values to return values
+    expected_values = {
+        "S1_vs_S2": 1,
+        "S1_vs_revcomp_S2": 4,
+        "S1_vs_S3": 3,
+        "S1_vs_revcomp_S3": 3,
+        "S2_vs_S3": 4,
+        "S2_vs_revcomp_S3": 3,
+    }
+
+    # assert key set
+    assert set(return_value.keys()) == set(expected_values.keys())
+
+    # assert exact values
+    assert return_value == expected_values
+
+    # create tqdm & update it while going over the items
+    # N = 3 -> total = N * (N - 1) = 6
+    tqdm_mock.assert_called_once_with(total=6, desc="Compare_barcodes", unit="cmp")

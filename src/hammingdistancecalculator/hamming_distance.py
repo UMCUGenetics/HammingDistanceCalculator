@@ -1,6 +1,4 @@
-import typer
 import pathlib
-
 import re
 import typer
 import csv
