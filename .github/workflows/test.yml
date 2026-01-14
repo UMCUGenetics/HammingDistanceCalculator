@@ -36,7 +36,8 @@ jobs:
             --junitxml=pytest.xml \
             --cov=src \
             --cov-report=term-missing \
-            --cov-fail-under=70 | tee pytest-coverage.txt
+            --cov-fail-under=70 | \
+          tee pytest-coverage.txt
 
       - name: Add test coverage comment
         # Only comment on events from the same repository (skip forked PRs)
