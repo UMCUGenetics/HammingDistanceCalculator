@@ -68,9 +68,9 @@ def test_is_valid_input_csv():
     bad_file = 'tests/bad_input.csv'
     good_file = 'tests/good_input.csv'
 
-    assert is_valid_input_csv(good_file) == True
+    assert is_valid_input_csv(good_file)
 
-    with pytest.raises(ValueError, match=f"has too many elements, 2 expected\.$"):
+    with pytest.raises(ValueError, match="has too many elements, 2 expected\.$"):
         is_valid_input_csv(bad_file)
 
 
@@ -105,7 +105,7 @@ def test_load_barcodes_invalid_csv_raises_exception(tmp_path):
                           encoding="utf-8")
 
     # invalid second row should throw a value error (but from is_valid_input_csv as its triggered first)
-    with pytest.raises(ValueError, match=f"^Invalid DNA-letters found in label "):
+    with pytest.raises(ValueError, match="^Invalid DNA-letters found in label "):
         load_barcodes(test_file3)
 
 
