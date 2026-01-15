@@ -206,7 +206,13 @@ def compare_sample_barcode_list(sample_barcode_list: list) -> dict:
 
 # main script
 @cli.command()
-def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen: label,barcode")):
+def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen: label,barcode"),
+         max_distance: int = typer.Option(
+             1,
+             "--max-distance",
+             "-d",
+             help="Maximale hamming distance waarvoor output wordt geschreven (default op 1, wat 0 & 1 schrijft)."
+         )):
 
     # read input
     sample_barcode_list = load_barcodes(input_csv)
@@ -216,8 +222,6 @@ def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen:
     # en value: hamming_distance
     compare_dict = compare_sample_barcode_list(sample_barcode_list)
 
-    print(f'all compare values: {compare_dict}')
-
     # create a fake sorted dict.
     # we stored label : hamming distance as key:value,
     # which means all labels with hamming distance 0 are in index 0
@@ -226,28 +230,17 @@ def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen:
     for key, value in compare_dict.items():
         sorted_dict[value].append(key)
 
-    distance_0 = sorted_dict[0]
-    distance_1 = sorted_dict[1]
+    # write output files for all distances of 0 to max_distance (2 by default)
+    for counter in range(max_distance):
+        output_path = pathlib.Path(f"hamming_distance_{counter}.txt")
 
-    # write output
-    output_path_hamming_0 = pathlib.Path('hamming_distance_0.txt')
-    output_path_hamming_1 = pathlib.Path('hamming_distance_1.txt')
+        # write each file
+        with output_path.open('w', newline='') as file_handle:
+            writer = csv.writer(file_handle)
+            writer.writerow([f"Number of comparisons found with hamming distance {counter}: {len(sorted_dict[counter])}"])
 
-    # dist 0
-    print("Writing barcodes with hamming distance 0...")
-    with output_path_hamming_0.open('w', newline='') as file_handle:
-        writer = csv.writer(file_handle)
-        writer.writerow([f"Number of comparisons found with hamming distance 0: {len(distance_0)}"])
-        for item in distance_0:
-            writer.writerow([f"Barcode {item.split('_vs_')[0]} vs barcode {item.split('_vs_')[1]} has hamming distance 0"])
-
-    # dist 1
-    print("Writing barcodes with hamming distance 1...")
-    with output_path_hamming_1.open('w', newline='') as file_handle:
-        writer = csv.writer(file_handle)
-        writer.writerow([f"Number of comparisons found with hamming distance 1: {len(distance_1)}"])
-        for item in distance_1:
-            writer.writerow([f"Barcode {item.split('_vs_')[0]} vs barcode {item.split('_vs_')[1]} has hamming distance 1"])
+            for item in sorted_dict[counter]:
+                writer.writerow([f"Barcode {item.split('_vs_')[0]} vs barcode {item.split('_vs_')[1]} has hamming distance {counter}"])
 
 
 if __name__ == "__main__":
