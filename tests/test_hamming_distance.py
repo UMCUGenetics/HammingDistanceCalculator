@@ -30,8 +30,16 @@ def test_hamming_distance(a, b, expected):
     # test normal cases
     assert hamming_distance(a, b) == expected
 
-
-def test_hamming_distance_empty():
+@pytest.mark.parametrize(
+    "a,b,expected",
+    [
+        ("", "", 0),                        # empty strings
+        ("A", "", 0),                       # unequal length
+        ("AC", "A", 0),                     # unequal length
+        ("A", "AC", 0),                     # unequal length
+    ],
+)
+def test_hamming_distance_empty(a, b, expected):
     # test empty strings
     with pytest.raises(ValueError, match=r"^Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences:"):
         hamming_distance("", "")
@@ -60,7 +68,7 @@ def test_hamming_distance_invalid_dna(a, b, error_message):
     assert str(value_err_message.value) == error_message
 
 
-# test valid and invalid DNA sequences
+# test is_valid_dna function
 @pytest.mark.parametrize(
     "seq,expected",
     [
