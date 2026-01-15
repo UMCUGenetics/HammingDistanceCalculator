@@ -12,16 +12,17 @@ cli = typer.Typer()
 
 # define hamming distance function
 def hamming_distance(seq1: str, seq2: str) -> int:
-    """
-    This function calculates the hamming distance between two barcode sequences.
+    """This function calculates the hamming distance between two barcode sequences.
 
-    :param seq1: The first index used
-    :type seq1: str
-    :param seq2: The index to compare to
-    :type seq2: str
-    :return: The hamming distance between the two distances
-    :rtype: int
+    Args:
+        seq1: First sequence for comparison
+        seq2: Second sequence for comparison
+
+    Returns:
+        distance_counter: The calculated hamming distance.
+
     """
+
     # stop if no str type provided
     if not isinstance(seq1, str) or not isinstance(seq2, str):
         raise TypeError("seq1 and/or seq2 are not of type str.")
@@ -47,24 +48,31 @@ def hamming_distance(seq1: str, seq2: str) -> int:
             distance_counter += 1
     return distance_counter
 
-def is_valid_dna(seq: str) -> bool:
-    """
-    Check if provided dna string contains valid characters
 
-    :param seq: input string
-    :return: boolean true/false
+def is_valid_dna(seq: str) -> bool:
+    """Check if provided dna string contains valid characters
+    
+    Currently only 'A', 'C', 'T' and 'G' are checked for.
+
+    Args:
+        seq: The String provided to test for valid DNA letters
+
+    Returns:
+        bool: Boolean stating if the input dna is valid or not
+
     """
     return bool(re.fullmatch(r"[ACTG]+", seq))
 
 
 def rev_comp(dna: str) -> str:
-    """
-    Function which returns the reverse complement of a DNA string
+    """Function which returns the reverse complement of a DNA string
 
-    :param dna:
-    :type dna: string
-    :return: returns rev complement
-    :rtype: str
+    Args:
+        dna: The input DNA string we want to convert
+
+    Returns:
+        reverse_comp: The reverse complement of the input DNA string
+
     """
     rev_dict = {'A': 'T',
                 'C': 'G',
@@ -74,12 +82,18 @@ def rev_comp(dna: str) -> str:
 
 
 def is_valid_input_csv(csv_file: Path) -> bool:
-    """
-    Function that tests input csv file given to be in the expected format.
+    """Function that tests input csv file given to be in the expected format.
+    
     We expect the file to have a header with labels 'label', 'barcode'.
     We expect no empty labels
     We expect no empty barcodes
-    :param csv_file:
+
+    Args:
+        csv_file: The input file to use
+
+    Returns:
+        bool: Returns a boolean to show if the input is valid or not
+
     """
     with open(csv_file, 'r') as file_handle:
         # expect the first line to be the header
@@ -115,9 +129,14 @@ def is_valid_input_csv(csv_file: Path) -> bool:
 
 
 def load_barcodes(input_csv: Path) -> list[tuple[(str, str)]]:
-    """
-    Load in the input csv file and store this as a list of tuples (label, barcode)
-    :param input_csv: filename of input csv
+    """Load in the input csv file and store this as a list of tuples (label, barcode)
+
+    Args:
+        input_csv: The input csv file to load
+
+    Returns:
+        list[tuple[(str, str)]]: A list of tuples, of barcode - dna combinations
+
     """
     # validate input
     if is_valid_input_csv(input_csv):
@@ -137,11 +156,13 @@ def load_barcodes(input_csv: Path) -> list[tuple[(str, str)]]:
 
 
 def compare_sample_barcode_list(sample_barcode_list: list) -> dict:
-    """
-    Compare all barcodes with all barcodes and calculate hamming distance
+    """Compare all barcodes with all barcodes and calculate hamming distance
 
-    :param sample_barcode_list: list of tuples with format 'label, barcode'
-    :return: dict with key: comparison, value: hamming_distance
+    Args:
+        sample_barcode_list: list of tuples with format 'label, barcode'
+
+    Returns:
+        dict: Dictionary with hamming distances between each barcode
     """
     result_dict = {}
 
@@ -175,7 +196,6 @@ def compare_sample_barcode_list(sample_barcode_list: list) -> dict:
                 progress_bar.update(1)
 
     return result_dict
-
 
 
 # main script
