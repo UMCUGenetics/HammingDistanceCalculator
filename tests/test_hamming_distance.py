@@ -33,8 +33,31 @@ def test_hamming_distance(a, b, expected):
 
 def test_hamming_distance_empty():
     # test empty strings
-    with pytest.raises(ValueError, match=r"^Invalid letter found in sequences:"):
+    with pytest.raises(ValueError, match=r"^Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences:"):
         hamming_distance("", "")
+
+# test invalid dna provided
+@pytest.mark.parametrize(
+    "a,b,error_message",
+    [
+        ("QQ", "AA", "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QQ"), # Left side invalid
+        ("AA", "BB", "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: BB"), # Right side invalid
+        ("QA", "AA", "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QA"), # Left side partially invalid
+        ("AQ", "AA", "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: AQ"), # Left side partially invalid
+        ("AA", "QA", "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QA"), # Right side partially invalid
+        ("AA", "AQ", "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: AQ"), # Right side partially invalid
+        ("QQ", "VV", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: QQ, VV"), # Both sides invalid
+        ("QA", "VA", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: QA, VA"), # Both sides invalid
+        ("QA", "AV", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: QA, AV"), # Both sides invalid
+        ("AQ", "VA", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: AQ, VA"), # Both sides invalid
+        ("AQ", "AV", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: AQ, AV"), # Both sides invalid
+    ],
+)
+def test_hamming_distance_invalid_dna(a, b, error_message):
+    with pytest.raises(ValueError) as value_err_message:
+        hamming_distance(a, b)
+
+    assert str(value_err_message.value) == error_message
 
 
 # test valid and invalid DNA sequences

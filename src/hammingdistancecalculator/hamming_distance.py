@@ -31,15 +31,21 @@ def hamming_distance(seq1: str, seq2: str) -> int:
     seq1 = seq1.strip().upper()
     seq2 = seq2.strip().upper()
 
-    # check for invalid letters
-    if not (is_valid_dna(seq1) and is_valid_dna(seq2)):
-        raise ValueError(f'Invalid letter found in sequences: {seq1}, {seq2}')
+    # check for invalid letters in each dna sequence separately and combined
+    check_1 = is_valid_dna(seq1)
+    check_2 = is_valid_dna(seq2)
+    if not check_1 and not check_2:
+        raise ValueError(f'Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: {seq1}, {seq2}')
+    elif not check_1 and check_2:
+        raise ValueError(f'Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: {seq1}')
+    elif check_1 and not check_2:
+        raise ValueError(f'Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: {seq2}')
 
     # break if index have unequal length
     if len(seq1) != len(seq2):
         raise ValueError("Strings must be of equal length")
 
-    # define a counter
+    # define a distance counter to store hamming_distance letter by letter until we get the full hamming distance
     distance_counter = 0
 
     # use zip to iterate faster and more pythonic
@@ -189,7 +195,7 @@ def compare_sample_barcode_list(sample_barcode_list: list) -> dict:
                 result_dict[comparison_key] = distance_forward
                 progress_bar.update(1)
 
-                # forward-revcomp
+                # forward-revcomp comparison
                 distance_revcomp = hamming_distance(sequence_left, reverse_complements[right_index])
                 comparison_key = f"{label_left}_vs_revcomp_{label_right}"
                 result_dict[comparison_key] = distance_revcomp
@@ -210,10 +216,12 @@ def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen:
     # en value: hamming_distance
     compare_dict = compare_sample_barcode_list(sample_barcode_list)
 
-    # debug
-    #print(f'compare dict: {compare_dict}')
+    print(f'all compare values: {compare_dict}')
 
-    # sort output based on hamming distance
+    # create a fake sorted dict.
+    # we stored label : hamming distance as key:value,
+    # which means all labels with hamming distance 0 are in index 0
+    # all labels with hamming distance 1 are in index 1 etc.
     sorted_dict = defaultdict(list)
     for key, value in compare_dict.items():
         sorted_dict[value].append(key)
