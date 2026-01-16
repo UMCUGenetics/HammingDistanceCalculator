@@ -164,6 +164,8 @@ def load_barcodes(input_csv: Path) -> list[tuple[(str, str)]]:
 def compare_sample_barcode_list(sample_barcode_list: list) -> dict:
     """Compare all barcodes with all barcodes and calculate hamming distance
 
+    This an all vs all comparison, so each barcode(or DNA sequence) found is compared against all other barcodes/sequences.
+
     Args:
         sample_barcode_list: list of tuples with format 'label, barcode'
 
