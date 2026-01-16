@@ -150,8 +150,8 @@ def load_barcodes(input_csv: Path) -> list[tuple[(str, str)]]:
 
     # loop over input, skip header and store as list of tuples
     barcode_records = list()
-    with open(input_csv, 'r') as f:
-        lines = f.readlines()[1:]
+    with open(input_csv, 'r') as file_handle:
+        lines = file_handle.readlines()[1:]
 
         for row in lines:
             label, sample = row.split(',')
