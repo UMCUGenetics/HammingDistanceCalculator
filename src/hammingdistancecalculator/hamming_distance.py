@@ -118,18 +118,18 @@ def is_valid_input_csv(csv_file: Path) -> bool:
             if len(line) > 2:
                 raise ValueError(f"Line {line} has too many elements, 2 expected.")
 
-            potential_label = str(line[0])
-            potential_sequence = str(line[1].upper())
+            label = str(line[0])
+            sequence = str(line[1].upper())
 
             # check for empty lines
-            if potential_label == "":
+            if label == "":
                 raise ValueError("Found an empty label.")
-            if potential_sequence == "":
-                raise ValueError(f"Found an empty barcode for label: {potential_label}")
+            if sequence == "":
+                raise ValueError(f"Found an empty barcode for label: {label}")
 
             # check if the DNA contains valid letters
-            if not is_valid_dna(potential_sequence.strip()):
-                raise ValueError(f"Invalid DNA-letters found in label '{potential_label}': {potential_sequence}")
+            if not is_valid_dna(sequence.strip()):
+                raise ValueError(f"Invalid DNA-letters found in label '{label}': {sequence}")
 
     return True
 
