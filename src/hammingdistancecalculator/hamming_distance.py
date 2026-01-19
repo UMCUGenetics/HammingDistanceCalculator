@@ -101,20 +101,19 @@ def is_valid_input_csv(csv_file: Path) -> bool:
         bool: Returns a boolean to show if the input is valid or not
 
     """
-    with open(csv_file, 'r') as file_handle:
+    with (open(csv_file, 'r') as file_handle):
+
         # expect the first line to be the header
-        all_lines = file_handle.readlines()
+        header_line = file_handle.readline().strip().lower()
 
-        headerline = all_lines[0].strip().lower()
-        bodylines = all_lines[1:]
+        # validate header
+        if header_line != 'label,barcode':
+            raise ValueError(f"Expected header with 'label, barcode', but found {header_line}")
 
-        if headerline != 'label,barcode':
-            raise ValueError(f"Expected header with 'label, barcode', but found {headerline}")
-
-        for row_values in bodylines:
+        # expect the rest to be the body
+        for row_values in file_handle:
             line = row_values.split(',')
             # check number of elements per line
-            print(f"line: {line}")
             if len(line) > 2:
                 raise ValueError(f"Line {line} has too many elements, 2 expected.")
 
