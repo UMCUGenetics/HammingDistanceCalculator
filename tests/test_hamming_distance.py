@@ -1,4 +1,5 @@
 import pytest
+import re
 from hammingdistancecalculator.hamming_distance import (
     hamming_distance,
     is_valid_dna,
@@ -101,7 +102,7 @@ def test_is_valid_input_csv():
 
     assert is_valid_input_csv(good_file)
 
-    with pytest.raises(ValueError, match="has too many elements, 2 expected\.$"):
+    with pytest.raises(ValueError, match=re.escape("Line ['S1', ' ACTG', ' invalid extra'] has too many elements, 2 expected.")):
         is_valid_input_csv(bad_file)
 
 

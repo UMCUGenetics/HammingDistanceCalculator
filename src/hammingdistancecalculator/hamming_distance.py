@@ -112,7 +112,7 @@ def is_valid_input_csv(csv_file: Path) -> bool:
 
         # expect the rest to be the body
         for row_values in file_handle:
-            line = row_values.split(',')
+            line = row_values.strip().split(',')
             # check number of elements per line
             if len(line) > 2:
                 raise ValueError(f"Line {line} has too many elements, 2 expected.")
@@ -150,11 +150,13 @@ def load_barcodes(input_csv: Path) -> list[tuple[(str, str)]]:
     # loop over input, skip header and store as list of tuples
     barcode_records = list()
     with open(input_csv, 'r') as file_handle:
-        lines = file_handle.readlines()[1:]
+        # skip first row (header)
+        next(file_handle)
 
-        for row in lines:
-            label, sample = row.split(',')
-            record = (str(label), str(sample.strip()))
+        # then process the rest
+        for row_values in file_handle:
+            label, sample = row_values.strip().split(',')
+            record = (str(label), str(sample))
             barcode_records.append(record)
 
     return barcode_records
