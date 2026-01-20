@@ -221,17 +221,17 @@ def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen:
     sample_barcode_list = load_barcodes(input_csv)
 
     # compare all barcodes
-    # maak dict met key: label_A_vs_label_B
-    # en value: hamming_distance
+    # create dict with key: label_A_vs_label_B
+    # and value: hamming_distance
     compare_dict = compare_sample_barcode_list(sample_barcode_list)
 
-    # create a fake sorted dict.
-    # we stored label : hamming distance as key:value,
+    # create a dict with labels for each hamming distance.
+    # here we store label : hamming distance as key:value,
     # which means all labels with hamming distance 0 are in index 0
     # all labels with hamming distance 1 are in index 1 etc.
-    sorted_dict = defaultdict(list)
+    hamming_distance_dict = defaultdict(list)
     for key, value in compare_dict.items():
-        sorted_dict[value].append(key)
+        hamming_distance_dict[value].append(key)
 
     # write output files for all distances of 0 to max_distance (2 by default)
     for counter in range(max_distance):
@@ -240,9 +240,9 @@ def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen:
         # write each file
         with output_path.open('w', newline='') as file_handle:
             writer = csv.writer(file_handle)
-            writer.writerow([f"Number of comparisons found with hamming distance {counter}: {len(sorted_dict[counter])}"])
+            writer.writerow([f"Number of comparisons found with hamming distance {counter}: {len(hamming_distance_dict[counter])}"])
 
-            for item in sorted_dict[counter]:
+            for item in hamming_distance_dict[counter]:
                 writer.writerow([f"Barcode {item.split('_vs_')[0]} vs barcode {item.split('_vs_')[1]} has hamming distance {counter}"])
 
 
