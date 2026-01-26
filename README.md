@@ -1,46 +1,49 @@
-# python_template
+# HammingDistanceCalculator
 
 ![test](https://github.com/UMCUGenetics/python_template/actions/workflows/test.yml/badge.svg)
 ![lint](https://github.com/UMCUGenetics/python_template/actions/workflows/lint.yml/badge.svg)
 
-Python template project - This repository can be used as a starting point / guide on how to setup a python repository, including automated tests and code formatting.
+HammingDistanceCalculator is a script to calculate the hamming distance for a set of barcodes of the same length.
+The script currently only allows for input DNA of letters 'A', 'C', 'T', and 'G'.
 
-## GitHub repository creation
+This script expects a list as input in the format:
 
-- Repository name: `Modules should have short, all-lowercase names. Underscores can be used in the module name if it improves readability. Python packages should also have short, all-lowercase names, although the use of underscores is discouraged.`
-- Add README
-- Add .gitignore: `python`
-- Add License: `MIT`
+```
+Label,Barcode
+read_name_1,ACTG
+read_name_2,GTTG
+read_name_3,ACCT
+read_name_4,ACTG
+...
+```
+which you can create or extend as long as you like. 
 
-Make sure to perform the following actions, after creating a new github repo:
-
-- Create a develop branch.
-- Configure branch protection rules.
-
-## UV
-
-UV supports packaged and unpackaged applications, this repository show cases a packaged application initiated with the command: `uv init --package .`. To create a simpler unpackaged application use: `uv init .`. Unpackaged applications can be used for single file scripts/tools, while packaged applications are used for (larger) tools requiring multiple files, distribution (pip) and tests separation.
-
-Setup uv package and development dependencies:
-
-```sh
-uv init --package .
-uv add --dev ruff
-uv add --dev pytest
+# Run help command:
+``` 
+uv run src/hammingdistancecalculator/hamming_distance.py --help
 ```
 
-Run pytest and the python-template tool:
+# Run example
 
-```sh
-uv run pytest tests
-uv run python-template World
-uv run python-template --help
+```
+# by default writes hamming distances 0 and 1:
+uv run src/hammingdistancecalculator/hamming_distance.py src/input_files/example_barcodes.csv
+
+# you can also specify the max hamming distance you want to see
+# it will then create a hamming distance txt file for all distances until the max (for max 3 created 0, 1, 2, 3)
+uv run src/hammingdistancecalculator/hamming_distance.py src/input_files/example_barcodes.csv --max-distance 3
 ```
 
-## GitHub Actions
+# Expected output
+Two files should be generated if no --max-distance is provided:
+```commandline
+hamming_distance_0.txt
+hamming_distance_1.txt
+```
 
-This template project contains two GitHub actions workflows (`.github/workflos/`): `lint.yml` and `test.yml`. The lint workflow uses the [ruff-action](https://github.com/astral-sh/ruff-action) action to run ruff. The test workflow uses the [setup-uv action](https://github.com/astral-sh/setup-uv) to setup uv, install dependencies and run tests. Both actions are configured to run on each pull request and push to main and develop.
+Each of these files contains all barcodes with said hamming distance.
 
-## pre-commit
 
-Git pre-commit hooks enable you to run certain commands before each commit and can be used to check code style before committing. The file `.pre-commit-config.yaml` contains the [Ruff](https://docs.astral.sh/ruff/) [pre-commit](https://pre-commit.com) hook, which will automatically run Ruff before each commit. Run the following command to install the git commit hook: `pre-commit install`.
+# Progress bar
+Due to the nature of the comparisons (n*n), calculation times can be quite long.
+Because of this, I make use of the TQDM module, to show a progress bar indicating in both % and absolute numbers the progress while calculating

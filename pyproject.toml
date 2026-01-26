@@ -1,18 +1,20 @@
 [project]
-name = "python-template"
+name = "HammingdistanceCalculator"
 version = "0.1.0"
-description = "Python template project."
+description = "Script that calculates the hamming distance between a list of barcodes."
 readme = "README.md"
 authors = [
-    { name = "Robert Ernst", email = "r.f.ernst-3@umcutrecht.nl" }
+    { name = "Frank de Kievit", email = "f.a.dekievit@umcutrecht.nl" }
 ]
 requires-python = "~=3.13.0"
 dependencies = [
+    "pathlib>=1.0.1",
+    "tqdm>=4.67.1",
     "typer>=0.20.0",
 ]
 
 [project.scripts]
-python-template = "python_template.cli:cli"
+hamming_distance = "hammingdistancecalculator.hamming_distance:cli"
 
 [build-system]
 requires = ["uv_build>=0.8.22,<0.9.0"]
@@ -20,8 +22,10 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "pre-commit>=4.5.1",
     "pytest>=8.4.2",
     "pytest-cov>=7.0.0",
+    "pytest-mock>=3.15.1",
     "ruff>=0.14.2",
 ]
 
