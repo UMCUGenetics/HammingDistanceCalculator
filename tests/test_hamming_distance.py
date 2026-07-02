@@ -1,7 +1,5 @@
-from pathlib import Path
 import pytest
 import re
-import tempfile
 from hammingdistancecalculator.hamming_distance import (
     cli,
     hamming_distance,
