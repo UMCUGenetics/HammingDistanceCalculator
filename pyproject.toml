@@ -31,3 +31,7 @@ dev = [
 
 [tool.ruff]
 line-length = 127
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+extend-select = ["W292"]

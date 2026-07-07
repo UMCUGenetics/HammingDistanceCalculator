@@ -11,57 +11,78 @@ from hammingdistancecalculator.hamming_distance import (
 )
 from typer.testing import CliRunner
 
+
 # test hamming distance function
 @pytest.mark.parametrize(
     "a,b,expected",
     [
-        ("A", "A", 0),                      # distance of 0, identical letters
-        ("a", "a", 0),                      # distance of 0, lowe case
-        ("a", "A", 0),                      # distance of 0, mixed case
-        ("C", "T", 1),                      # distance of 1, 1 letter difference
-        ("c", "t", 1),                      # distance of 1, lower case
-        ("C", "t", 1),                      # distance of 1, mixed case
-        ("ACTGCG", "ACTGCG", 0),            # distance of 0, multiple letters
-        ("actgcg", "actgcg", 0),            # distance of 0, lower case
-        ("ACTGCG", "actgcg", 0),            # distance of 0, mixed case
-        ("AACCGGTT", "TTGGCCAA", 8),        # distance of 6, full mismatch
-        ("aaccttgg", "ttggccaa", 8),        # distance of 6, full mismatch
-        ("AACCGGTT", "ttggccaa", 8),        # distance of 6, full mismatch
+        ("A", "A", 0),  # distance of 0, identical letters
+        ("a", "a", 0),  # distance of 0, lowe case
+        ("a", "A", 0),  # distance of 0, mixed case
+        ("C", "T", 1),  # distance of 1, 1 letter difference
+        ("c", "t", 1),  # distance of 1, lower case
+        ("C", "t", 1),  # distance of 1, mixed case
+        ("ACTGCG", "ACTGCG", 0),  # distance of 0, multiple letters
+        ("actgcg", "actgcg", 0),  # distance of 0, lower case
+        ("ACTGCG", "actgcg", 0),  # distance of 0, mixed case
+        ("AACCGGTT", "TTGGCCAA", 8),  # distance of 6, full mismatch
+        ("aaccttgg", "ttggccaa", 8),  # distance of 6, full mismatch
+        ("AACCGGTT", "ttggccaa", 8),  # distance of 6, full mismatch
     ],
 )
 def test_hamming_distance(a, b, expected):
     # test normal cases
     assert hamming_distance(a, b) == expected
 
+
 @pytest.mark.parametrize(
     "a,b,expected",
     [
-        ("", "", 0),                        # empty strings
-        ("A", "", 0),                       # unequal length
-        ("AC", "A", 0),                     # unequal length
-        ("A", "AC", 0),                     # unequal length
+        ("", "", 0),  # empty strings
+        ("A", "", 0),  # unequal length
+        ("AC", "A", 0),  # unequal length
+        ("A", "AC", 0),  # unequal length
     ],
 )
 def test_hamming_distance_empty(a, b, expected):
     # test empty strings
-    with pytest.raises(ValueError, match=r"^Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences:"):
+    with pytest.raises(ValueError, match=r"^Provided sequences are invalid, "
+                                         r"only A, C, T, and G nucleotides are allowed. Invalid sequences:"):
         hamming_distance("", "")
+
 
 # test invalid dna provided
 @pytest.mark.parametrize(
     "a,b,error_message",
     [
-        ("QQ", "AA", "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QQ"), # Left side invalid
-        ("AA", "BB", "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: BB"), # Right side invalid
-        ("QA", "AA", "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QA"), # Left side partially invalid
-        ("AQ", "AA", "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: AQ"), # Left side partially invalid
-        ("AA", "QA", "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QA"), # Right side partially invalid
-        ("AA", "AQ", "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: AQ"), # Right side partially invalid
-        ("QQ", "VV", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: QQ, VV"), # Both sides invalid
-        ("QA", "VA", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: QA, VA"), # Both sides invalid
-        ("QA", "AV", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: QA, AV"), # Both sides invalid
-        ("AQ", "VA", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: AQ, VA"), # Both sides invalid
-        ("AQ", "AV", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: AQ, AV"), # Both sides invalid
+        ("QQ", "AA",
+         "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QQ"),
+        # Left side invalid
+        ("AA", "BB",
+         "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: BB"),
+        # Right side invalid
+        ("QA", "AA",
+         "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QA"),
+        # Left side partially invalid
+        ("AQ", "AA",
+         "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: AQ"),
+        # Left side partially invalid
+        ("AA", "QA",
+         "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QA"),
+        # Right side partially invalid
+        ("AA", "AQ",
+         "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: AQ"),
+        # Right side partially invalid
+        ("QQ", "VV", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: QQ, VV"),
+        # Both sides invalid
+        ("QA", "VA", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: QA, VA"),
+        # Both sides invalid
+        ("QA", "AV", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: QA, AV"),
+        # Both sides invalid
+        ("AQ", "VA", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: AQ, VA"),
+        # Both sides invalid
+        ("AQ", "AV", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: AQ, AV"),
+        # Both sides invalid
     ],
 )
 def test_hamming_distance_invalid_dna(a, b, error_message):
@@ -75,19 +96,20 @@ def test_hamming_distance_invalid_dna(a, b, error_message):
 @pytest.mark.parametrize(
     "seq,expected",
     [
-        ("A", True),            # Single valid character
-        ("ACTG", True),         # All valid characters
-        ("AAA", True),          # Repeated valid characters
-        ("", False),            # Empty string should be invalid
-        ("ACTGN", False),       # Contains 'N' which is not allowed
-        ("XYZ", False),         # Completely invalid characters
-        ("actg", False),        # Lowercase letters should fail (regex expects uppercase)
-        ("ACTG123", False),     # Numbers are not allowed
-        ("ACTG!", False),       # Special characters are not allowed
+        ("A", True),  # Single valid character
+        ("ACTG", True),  # All valid characters
+        ("AAA", True),  # Repeated valid characters
+        ("", False),  # Empty string should be invalid
+        ("ACTGN", False),  # Contains 'N' which is not allowed
+        ("XYZ", False),  # Completely invalid characters
+        ("actg", False),  # Lowercase letters should fail (regex expects uppercase)
+        ("ACTG123", False),  # Numbers are not allowed
+        ("ACTG!", False),  # Special characters are not allowed
     ]
 )
 def test_is_valid_dna(seq, expected):
     assert is_valid_dna(seq) == expected
+
 
 # test rev_comp
 def test_rev_comp():
@@ -97,6 +119,7 @@ def test_rev_comp():
     # palindrome
     assert rev_comp("ATAT") == "ATAT"
 
+
 # test is_valid_input_csv
 def test_is_valid_input_csv():
     bad_file = 'tests/bad_input.csv'
@@ -104,7 +127,8 @@ def test_is_valid_input_csv():
 
     assert is_valid_input_csv(good_file)
 
-    with pytest.raises(ValueError, match=re.escape("Line ['S1', ' ACTG', ' invalid extra'] has too many elements, 2 expected.")):
+    with pytest.raises(ValueError,
+                       match=re.escape("Line ['S1', ' ACTG', ' invalid extra'] has too many elements, 2 expected.")):
         is_valid_input_csv(bad_file)
 
 
@@ -117,7 +141,7 @@ def test_load_barcodes_correct(tmp_path):
                          encoding="utf-8")
 
     test_barcodes = load_barcodes(test_file)
-    assert test_barcodes == [("S1", "ACTG"),("S2", "TTTT")]
+    assert test_barcodes == [("S1", "ACTG"), ("S2", "TTTT")]
 
 
 def test_load_barcodes_strips_whitespace(tmp_path):

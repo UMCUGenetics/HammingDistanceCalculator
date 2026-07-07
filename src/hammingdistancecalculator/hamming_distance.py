@@ -34,11 +34,16 @@ def hamming_distance(seq1: str, seq2: str) -> int:
     check_1 = is_valid_dna(seq1)
     check_2 = is_valid_dna(seq2)
     if not check_1 and not check_2:
-        raise ValueError(f'Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: {seq1}, {seq2}')
+        raise ValueError(
+            f'Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: {seq1}, {seq2}')
     elif not check_1 and check_2:
-        raise ValueError(f'Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: {seq1}')
+        raise ValueError(
+            f'Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. '
+            f'Invalid sequence: {seq1}')
     elif check_1 and not check_2:
-        raise ValueError(f'Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: {seq2}')
+        raise ValueError(
+            f'Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. '
+            f'Invalid sequence: {seq2}')
 
     # break if index have unequal length
     if len(seq1) != len(seq2):
@@ -56,7 +61,6 @@ def hamming_distance(seq1: str, seq2: str) -> int:
 
 def is_valid_dna(seq: str) -> bool:
     """Check if provided dna string contains valid characters
-    
     Currently only 'A', 'C', 'T' and 'G' are checked for.
 
     Args:
@@ -71,7 +75,6 @@ def is_valid_dna(seq: str) -> bool:
 
 def rev_comp(dna: str) -> str:
     """Function which returns the reverse complement of a DNA string
-
     Args:
         dna: The input DNA string we want to convert
 
@@ -88,7 +91,6 @@ def rev_comp(dna: str) -> str:
 
 def is_valid_input_csv(csv_file: Path) -> bool:
     """Function that tests input csv file given to be in the expected format.
-    
     We expect the file to have a header with labels 'label', 'barcode'.
     We expect no empty labels
     We expect no empty barcodes
@@ -209,19 +211,18 @@ def compare_sample_barcode_list(sample_barcode_list: list) -> dict:
 # main script
 @cli.command()
 def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen: label,barcode"),
-        max_distance: int = typer.Option(
-            1,
-            "--max-distance",
-            "-d",
-            help="Maximale hamming distance waarvoor output wordt geschreven (default op 1, wat 0 & 1 schrijft)."
-        ),
-        outpath: Path = typer.Option(
-            ".",
-            "--outpath",
-            "-o",
-            help="Directory waar output files worden geschreven (default huidige directory)."
-        )):
-
+         max_distance: int = typer.Option(
+             1,
+             "--max-distance",
+             "-d",
+             help="Maximale hamming distance waarvoor output wordt geschreven (default op 1, wat 0 & 1 schrijft)."
+         ),
+         outpath: Path = typer.Option(
+             ".",
+             "--outpath",
+             "-o",
+             help="Directory waar output files worden geschreven (default huidige directory)."
+         )):
     # read input
     sample_barcode_list = load_barcodes(input_csv)
 
@@ -251,10 +252,12 @@ def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen:
         # write each file
         with output_path.open('w', newline='') as file_handle:
             writer = csv.writer(file_handle)
-            writer.writerow([f"Number of comparisons found with hamming distance {counter}: {len(hamming_distance_dict[counter])}"])
+            writer.writerow(
+                [f"Number of comparisons found with hamming distance {counter}: {len(hamming_distance_dict[counter])}"])
 
             for item in hamming_distance_dict[counter]:
-                writer.writerow([f"Barcode {item.split('_vs_')[0]} vs barcode {item.split('_vs_')[1]} has hamming distance {counter}"])
+                writer.writerow(
+                    [f"Barcode {item.split('_vs_')[0]} vs barcode {item.split('_vs_')[1]} has hamming distance {counter}"])
 
 
 if __name__ == "__main__":
