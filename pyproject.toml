@@ -1,6 +1,6 @@
 [project]
 name = "HammingdistanceCalculator"
-version = "0.1.0"
+version = "0.2.0"
 description = "Script that calculates the hamming distance between a list of barcodes."
 readme = "README.md"
 authors = [

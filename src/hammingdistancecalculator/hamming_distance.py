@@ -1,4 +1,3 @@
-import pathlib
 import re
 import typer
 import csv
@@ -210,12 +209,18 @@ def compare_sample_barcode_list(sample_barcode_list: list) -> dict:
 # main script
 @cli.command()
 def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen: label,barcode"),
-         max_distance: int = typer.Option(
-             1,
-             "--max-distance",
-             "-d",
-             help="Maximale hamming distance waarvoor output wordt geschreven (default op 1, wat 0 & 1 schrijft)."
-         )):
+        max_distance: int = typer.Option(
+            1,
+            "--max-distance",
+            "-d",
+            help="Maximale hamming distance waarvoor output wordt geschreven (default op 1, wat 0 & 1 schrijft)."
+        ),
+        outpath: Path = typer.Option(
+            ".",
+            "--outpath",
+            "-o",
+            help="Directory waar output files worden geschreven (default huidige directory)."
+        )):
 
     # read input
     sample_barcode_list = load_barcodes(input_csv)
@@ -233,9 +238,15 @@ def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen:
     for key, value in compare_dict.items():
         hamming_distance_dict[value].append(key)
 
-    # write output files for all distances of 0 to max_distance (2 by default)
-    for counter in range(max_distance):
-        output_path = pathlib.Path(f"hamming_distance_{counter}.txt")
+    # verify output path exists to write to
+    outpath.mkdir(parents=True, exist_ok=True)
+
+    # add 1 to the max distance because when you want a range of 1, you want to loop 'including' 1, not 'until' 1
+    effective_max_distance = max_distance + 1
+
+    # write output files for all distances of 0 to effective_max_distance (2 by default)
+    for counter in range(effective_max_distance):
+        output_path = outpath / f"hamming_distance_{counter}.txt"
 
         # write each file
         with output_path.open('w', newline='') as file_handle:
