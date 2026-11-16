@@ -1,9 +1,11 @@
-import re
-import typer
 import csv
-from pathlib import Path
-from tqdm import tqdm
+import re
 from collections import defaultdict
+from pathlib import Path
+from typing import Annotated
+
+import typer
+from tqdm import tqdm
 
 # create typer object
 cli = typer.Typer()
@@ -210,16 +212,26 @@ def compare_sample_barcode_list(sample_barcode_list: list) -> dict:
 # main script
 @cli.command()
 def main(
-    input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen: label,barcode"),
-    max_distance: int = typer.Option(
-        1,
-        "--max-distance",
-        "-d",
-        help="Maximale hamming distance waarvoor output wordt geschreven (default op 1, wat 0 & 1 schrijft).",
-    ),
-    outpath: Path = typer.Option(
-        ".", "--outpath", "-o", help="Directory waar output files worden geschreven (default huidige directory)."
-    ),
+    input_csv: Annotated[
+        Path,
+        typer.Argument(help="Pad naar input CSV met kolommen: label,barcode"),
+    ],
+    max_distance: Annotated[
+        int,
+        typer.Option(
+            "--max-distance",
+            "-d",
+            help="Maximale hamming distance waarvoor output wordt geschreven (default op 1, wat 0 & 1 schrijft).",
+        ),
+    ] = 1,
+    outpath: Annotated[
+        Path,
+        typer.Option(
+            "--outpath",
+            "-o",
+            help="Directory waar output files worden geschreven (default huidige directory).",
+        ),
+    ] = Path("."),
 ):
     # read input
     sample_barcode_list = load_barcodes(input_csv)
