@@ -85,10 +85,7 @@ def rev_comp(dna: str) -> str:
         reverse_comp: The reverse complement of the input DNA string
 
     """
-    rev_dict = {"A": "T",
-                "C": "G",
-                "G": "C",
-                "T": "A"}
+    rev_dict = {"A": "T", "C": "G", "G": "C", "T": "A"}
     return "".join(rev_dict[n] for n in reversed(dna))
 
 
@@ -105,8 +102,7 @@ def is_valid_input_csv(csv_file: Path) -> bool:
         bool: Returns a boolean to show if the input is valid or not
 
     """
-    with (open(csv_file, "r") as file_handle):
-
+    with open(csv_file, "r") as file_handle:
         # expect the first line to be the header
         header_line = file_handle.readline().strip().lower()
 
@@ -213,19 +209,18 @@ def compare_sample_barcode_list(sample_barcode_list: list) -> dict:
 
 # main script
 @cli.command()
-def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen: label,barcode"),
-         max_distance: int = typer.Option(
-             1,
-             "--max-distance",
-             "-d",
-             help="Maximale hamming distance waarvoor output wordt geschreven (default op 1, wat 0 & 1 schrijft)."
-         ),
-         outpath: Path = typer.Option(
-             ".",
-             "--outpath",
-             "-o",
-             help="Directory waar output files worden geschreven (default huidige directory)."
-         )):
+def main(
+    input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen: label,barcode"),
+    max_distance: int = typer.Option(
+        1,
+        "--max-distance",
+        "-d",
+        help="Maximale hamming distance waarvoor output wordt geschreven (default op 1, wat 0 & 1 schrijft).",
+    ),
+    outpath: Path = typer.Option(
+        ".", "--outpath", "-o", help="Directory waar output files worden geschreven (default huidige directory)."
+    ),
+):
     # read input
     sample_barcode_list = load_barcodes(input_csv)
 
@@ -256,11 +251,13 @@ def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen:
         with output_path.open("w", newline="") as file_handle:
             writer = csv.writer(file_handle)
             writer.writerow(
-                [f"Number of comparisons found with hamming distance {counter}: {len(hamming_distance_dict[counter])}"])
+                [f"Number of comparisons found with hamming distance {counter}: {len(hamming_distance_dict[counter])}"]
+            )
 
             for item in hamming_distance_dict[counter]:
                 writer.writerow(
-                    [f"Barcode {item.split('_vs_')[0]} vs barcode {item.split('_vs_')[1]} has hamming distance {counter}"])
+                    [f"Barcode {item.split('_vs_')[0]} vs barcode {item.split('_vs_')[1]} has hamming distance {counter}"]
+                )
 
 
 if __name__ == "__main__":

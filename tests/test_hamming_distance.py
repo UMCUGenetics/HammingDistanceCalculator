@@ -7,7 +7,7 @@ from hammingdistancecalculator.hamming_distance import (
     rev_comp,
     is_valid_input_csv,
     load_barcodes,
-    compare_sample_barcode_list
+    compare_sample_barcode_list,
 )
 from typer.testing import CliRunner
 
@@ -46,8 +46,11 @@ def test_hamming_distance(a, b, expected):
 )
 def test_hamming_distance_empty(a, b, expected):
     # test empty strings
-    with pytest.raises(ValueError, match=r"^Provided sequences are invalid, "
-                                         r"only A, C, T, and G nucleotides are allowed. Invalid sequences:"):
+    with pytest.raises(
+        ValueError,
+        match=r"^Provided sequences are invalid, "
+        r"only A, C, T, and G nucleotides are allowed. Invalid sequences:",
+    ):
         hamming_distance("", "")
 
 
@@ -55,23 +58,41 @@ def test_hamming_distance_empty(a, b, expected):
 @pytest.mark.parametrize(
     "a,b,error_message",
     [
-        ("QQ", "AA",
-         "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QQ"),
+        (
+            "QQ",
+            "AA",
+            "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QQ",
+        ),
         # Left side invalid
-        ("AA", "BB",
-         "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: BB"),
+        (
+            "AA",
+            "BB",
+            "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: BB",
+        ),
         # Right side invalid
-        ("QA", "AA",
-         "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QA"),
+        (
+            "QA",
+            "AA",
+            "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QA",
+        ),
         # Left side partially invalid
-        ("AQ", "AA",
-         "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: AQ"),
+        (
+            "AQ",
+            "AA",
+            "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: AQ",
+        ),
         # Left side partially invalid
-        ("AA", "QA",
-         "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QA"),
+        (
+            "AA",
+            "QA",
+            "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: QA",
+        ),
         # Right side partially invalid
-        ("AA", "AQ",
-         "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: AQ"),
+        (
+            "AA",
+            "AQ",
+            "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: AQ",
+        ),
         # Right side partially invalid
         ("QQ", "VV", "Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: QQ, VV"),
         # Both sides invalid
@@ -105,7 +126,7 @@ def test_hamming_distance_invalid_dna(a, b, error_message):
         ("actg", False),  # Lowercase letters should fail (regex expects uppercase)
         ("ACTG123", False),  # Numbers are not allowed
         ("ACTG!", False),  # Special characters are not allowed
-    ]
+    ],
 )
 def test_is_valid_dna(seq, expected):
     assert is_valid_dna(seq) == expected
@@ -127,18 +148,16 @@ def test_is_valid_input_csv():
 
     assert is_valid_input_csv(good_file)
 
-    with pytest.raises(ValueError,
-                       match=re.escape("Line ['S1', ' ACTG', ' invalid extra'] has too many elements, 2 expected.")):
+    with pytest.raises(
+        ValueError, match=re.escape("Line ['S1', ' ACTG', ' invalid extra'] has too many elements, 2 expected.")
+    ):
         is_valid_input_csv(bad_file)
 
 
 # test load_barcodes
 def test_load_barcodes_correct(tmp_path):
     test_file = tmp_path / "barcodes.csv"
-    test_file.write_text("label,barcode\n"
-                         "S1,ACTG\n"
-                         "S2,TTTT",
-                         encoding="utf-8")
+    test_file.write_text("label,barcode\nS1,ACTG\nS2,TTTT", encoding="utf-8")
 
     test_barcodes = load_barcodes(test_file)
     assert test_barcodes == [("S1", "ACTG"), ("S2", "TTTT")]
@@ -146,10 +165,7 @@ def test_load_barcodes_correct(tmp_path):
 
 def test_load_barcodes_strips_whitespace(tmp_path):
     test_file2 = tmp_path / "barcodes2.csv"
-    test_file2.write_text("label,barcode\n"
-                          "S1,ACTG      \n"
-                          "S2,TTTT    ",
-                          encoding="utf-8")
+    test_file2.write_text("label,barcode\nS1,ACTG      \nS2,TTTT    ", encoding="utf-8")
 
     test_barcodes2 = load_barcodes(test_file2)
     assert test_barcodes2 == [("S1", "ACTG"), ("S2", "TTTT")]
@@ -157,10 +173,7 @@ def test_load_barcodes_strips_whitespace(tmp_path):
 
 def test_load_barcodes_invalid_csv_raises_exception(tmp_path):
     test_file3 = tmp_path / "barcodes2.csv"
-    test_file3.write_text("label,barcode\n"
-                          "S1,ACXX\n"
-                          "S2,",
-                          encoding="utf-8")
+    test_file3.write_text("label,barcode\nS1,ACXX\nS2,", encoding="utf-8")
 
     # invalid second row should throw a value error (but from is_valid_input_csv as its triggered first)
     with pytest.raises(ValueError, match="^Invalid DNA-letters found in label "):
@@ -169,11 +182,7 @@ def test_load_barcodes_invalid_csv_raises_exception(tmp_path):
 
 # test compare_sample_barcode_list
 def test_compare_sample_barcode_list_with_mocked_tpqm(mocker):
-    test_set = [
-        ("S1", "ACTG"),
-        ("S2", "ACCG"),
-        ("S3", "TTTT")
-    ]
+    test_set = [("S1", "ACTG"), ("S2", "ACCG"), ("S3", "TTTT")]
 
     # Create a mock object that behaves like a tqdm context manager
     progress_mock = mocker.MagicMock()
