@@ -1,15 +1,17 @@
-import pytest
 import re
+
+import pytest
+from typer.testing import CliRunner
+
 from hammingdistancecalculator.hamming_distance import (
     cli,
+    compare_sample_barcode_list,
     hamming_distance,
     is_valid_dna,
-    rev_comp,
     is_valid_input_csv,
     load_barcodes,
-    compare_sample_barcode_list,
+    rev_comp,
 )
-from typer.testing import CliRunner
 
 
 # test hamming distance function
