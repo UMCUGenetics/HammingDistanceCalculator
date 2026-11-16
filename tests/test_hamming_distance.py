@@ -14,7 +14,7 @@ from typer.testing import CliRunner
 
 # test hamming distance function
 @pytest.mark.parametrize(
-    "a,b,expected",
+    ("a", "b", "expected"),
     [
         ("A", "A", 0),  # distance of 0, identical letters
         ("a", "a", 0),  # distance of 0, lowe case
@@ -56,7 +56,7 @@ def test_hamming_distance_empty(a, b, expected):
 
 # test invalid dna provided
 @pytest.mark.parametrize(
-    "a,b,error_message",
+    ("a", "b", "error_message"),
     [
         (
             "QQ",
@@ -107,15 +107,13 @@ def test_hamming_distance_empty(a, b, expected):
     ],
 )
 def test_hamming_distance_invalid_dna(a, b, error_message):
-    with pytest.raises(ValueError) as value_err_message:
+    with pytest.raises(ValueError, match=error_message):
         hamming_distance(a, b)
-
-    assert str(value_err_message.value) == error_message
 
 
 # test is_valid_dna function
 @pytest.mark.parametrize(
-    "seq,expected",
+    ("seq", "expected"),
     [
         ("A", True),  # Single valid character
         ("ACTG", True),  # All valid characters
