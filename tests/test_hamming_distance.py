@@ -122,8 +122,8 @@ def test_rev_comp():
 
 # test is_valid_input_csv
 def test_is_valid_input_csv():
-    bad_file = 'tests/bad_input.csv'
-    good_file = 'tests/good_input.csv'
+    bad_file = "tests/bad_input.csv"
+    good_file = "tests/good_input.csv"
 
     assert is_valid_input_csv(good_file)
 
@@ -134,7 +134,7 @@ def test_is_valid_input_csv():
 
 # test load_barcodes
 def test_load_barcodes_correct(tmp_path):
-    test_file = tmp_path / 'barcodes.csv'
+    test_file = tmp_path / "barcodes.csv"
     test_file.write_text("label,barcode\n"
                          "S1,ACTG\n"
                          "S2,TTTT",
@@ -145,7 +145,7 @@ def test_load_barcodes_correct(tmp_path):
 
 
 def test_load_barcodes_strips_whitespace(tmp_path):
-    test_file2 = tmp_path / 'barcodes2.csv'
+    test_file2 = tmp_path / "barcodes2.csv"
     test_file2.write_text("label,barcode\n"
                           "S1,ACTG      \n"
                           "S2,TTTT    ",
@@ -156,7 +156,7 @@ def test_load_barcodes_strips_whitespace(tmp_path):
 
 
 def test_load_barcodes_invalid_csv_raises_exception(tmp_path):
-    test_file3 = tmp_path / 'barcodes2.csv'
+    test_file3 = tmp_path / "barcodes2.csv"
     test_file3.write_text("label,barcode\n"
                           "S1,ACXX\n"
                           "S2,",

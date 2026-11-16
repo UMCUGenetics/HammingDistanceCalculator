@@ -35,15 +35,18 @@ def hamming_distance(seq1: str, seq2: str) -> int:
     check_2 = is_valid_dna(seq2)
     if not check_1 and not check_2:
         raise ValueError(
-            f'Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: {seq1}, {seq2}')
+            f"Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences: {seq1}, {seq2}"
+        )
     elif not check_1 and check_2:
         raise ValueError(
-            f'Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. '
-            f'Invalid sequence: {seq1}')
+            f"Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. "
+            f"Invalid sequence: {seq1}"
+        )
     elif check_1 and not check_2:
         raise ValueError(
-            f'Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. '
-            f'Invalid sequence: {seq2}')
+            f"Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. "
+            f"Invalid sequence: {seq2}"
+        )
 
     # break if index have unequal length
     if len(seq1) != len(seq2):
@@ -82,10 +85,10 @@ def rev_comp(dna: str) -> str:
         reverse_comp: The reverse complement of the input DNA string
 
     """
-    rev_dict = {'A': 'T',
-                'C': 'G',
-                'G': 'C',
-                'T': 'A'}
+    rev_dict = {"A": "T",
+                "C": "G",
+                "G": "C",
+                "T": "A"}
     return "".join(rev_dict[n] for n in reversed(dna))
 
 
@@ -102,18 +105,18 @@ def is_valid_input_csv(csv_file: Path) -> bool:
         bool: Returns a boolean to show if the input is valid or not
 
     """
-    with (open(csv_file, 'r') as file_handle):
+    with (open(csv_file, "r") as file_handle):
 
         # expect the first line to be the header
         header_line = file_handle.readline().strip().lower()
 
         # validate header
-        if header_line != 'label,barcode':
+        if header_line != "label,barcode":
             raise ValueError(f"Expected header with 'label, barcode', but found {header_line}")
 
         # expect the rest to be the body
         for row_values in file_handle:
-            line = row_values.strip().split(',')
+            line = row_values.strip().split(",")
             # check number of elements per line
             if len(line) > 2:
                 raise ValueError(f"Line {line} has too many elements, 2 expected.")
@@ -150,13 +153,13 @@ def load_barcodes(input_csv: Path) -> list[tuple[(str, str)]]:
 
     # loop over input, skip header and store as list of tuples
     barcode_records = list()
-    with open(input_csv, 'r') as file_handle:
+    with open(input_csv, "r") as file_handle:
         # skip first row (header)
         next(file_handle)
 
         # then process the rest
         for row_values in file_handle:
-            label, sample = row_values.strip().split(',')
+            label, sample = row_values.strip().split(",")
             record = (str(label), str(sample))
             barcode_records.append(record)
 
@@ -250,7 +253,7 @@ def main(input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen:
         output_path = outpath / f"hamming_distance_{counter}.txt"
 
         # write each file
-        with output_path.open('w', newline='') as file_handle:
+        with output_path.open("w", newline="") as file_handle:
             writer = csv.writer(file_handle)
             writer.writerow(
                 [f"Number of comparisons found with hamming distance {counter}: {len(hamming_distance_dict[counter])}"])
