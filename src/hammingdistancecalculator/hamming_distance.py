@@ -231,7 +231,7 @@ def main(
             "-o",
             help="Directory waar output files worden geschreven (default huidige directory).",
         ),
-    ] = Path("."),
+    ] = Path(),
 ):
     # read input
     sample_barcode_list = load_barcodes(input_csv)
