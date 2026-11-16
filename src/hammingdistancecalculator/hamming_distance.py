@@ -102,7 +102,7 @@ def is_valid_input_csv(csv_file: Path) -> bool:
         bool: Returns a boolean to show if the input is valid or not
 
     """
-    with open(csv_file, "r") as file_handle:
+    with csv_file.open("r") as file_handle:
         # expect the first line to be the header
         header_line = file_handle.readline().strip().lower()
 
@@ -149,7 +149,7 @@ def load_barcodes(input_csv: Path) -> list[tuple[(str, str)]]:
 
     # loop over input, skip header and store as list of tuples
     barcode_records = list()
-    with open(input_csv, "r") as file_handle:
+    with input_csv.open("r") as file_handle:
         # skip first row (header)
         next(file_handle)
 
