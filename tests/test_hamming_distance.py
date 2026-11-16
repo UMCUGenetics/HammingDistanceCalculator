@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 
 import pytest
 from typer.testing import CliRunner
@@ -143,8 +144,8 @@ def test_rev_comp():
 
 # test is_valid_input_csv
 def test_is_valid_input_csv():
-    bad_file = "tests/bad_input.csv"
-    good_file = "tests/good_input.csv"
+    bad_file = Path("tests/bad_input.csv")
+    good_file = Path("tests/good_input.csv")
 
     assert is_valid_input_csv(good_file)
 
