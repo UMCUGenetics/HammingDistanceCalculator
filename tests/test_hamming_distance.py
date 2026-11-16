@@ -36,22 +36,38 @@ def test_hamming_distance(a, b, expected):
 
 
 @pytest.mark.parametrize(
-    "a,b,expected",
+    ("seq1", "seq2", "expected_error"),
     [
-        ("", "", 0),  # empty strings
-        ("A", "", 0),  # unequal length
-        ("AC", "A", 0),  # unequal length
-        ("A", "AC", 0),  # unequal length
+        (
+            "",
+            "",
+            "^Provided sequences are invalid, only A, C, T, and G nucleotides are allowed. Invalid sequences:",
+        ),  # empty strings
+        (
+            "A",
+            "",
+            "Provided sequence for sequence 2 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: ",
+        ),  # single empty string (seq2)
+        (
+            "",
+            "A",
+            "Provided sequence for sequence 1 is invalid, only A, C, T, and G nucleotides are allowed. Invalid sequence: ",
+        ),  # single empty string (seq1)
+        ("AC", "A", "Strings must be of equal length"),  # unequal length
+        ("A", "AC", "Strings must be of equal length"),  # unequal length
+    ],
+    ids=[
+        "empty_strings",
+        "empty_string_seq2",
+        "empty_string_seq1",
+        "unequal_length_seq1_longer",
+        "unequal_length_seq2_longer",
     ],
 )
-def test_hamming_distance_empty(a, b, expected):
-    # test empty strings
-    with pytest.raises(
-        ValueError,
-        match=r"^Provided sequences are invalid, "
-        r"only A, C, T, and G nucleotides are allowed. Invalid sequences:",
-    ):
-        hamming_distance("", "")
+def test_hamming_distance_value_error(seq1, seq2, expected_error):
+    # Test cases where hamming_distance method raises a value error.
+    with pytest.raises(ValueError, match=expected_error):
+        hamming_distance(seq1=seq1, seq2=seq2)
 
 
 # test invalid dna provided
