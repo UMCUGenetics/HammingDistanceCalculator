@@ -58,7 +58,7 @@ def hamming_distance(seq1: str, seq2: str) -> int:
     distance_counter = 0
 
     # use zip to iterate faster and more pythonic
-    for character_left, character_right in zip(seq1, seq2):
+    for character_left, character_right in zip(seq1, seq2, strict=False):
         if character_left != character_right:
             distance_counter += 1
     return distance_counter
