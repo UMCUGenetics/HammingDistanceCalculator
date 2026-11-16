@@ -1,9 +1,13 @@
-import re
-import typer
+"""Calculate hamming distance between label and barcodes sequences provided as csv file."""
+
 import csv
-from pathlib import Path
-from tqdm import tqdm
+import re
 from collections import defaultdict
+from pathlib import Path
+from typing import Annotated
+
+import typer
+from tqdm import tqdm
 
 # create typer object
 cli = typer.Typer()
@@ -19,9 +23,7 @@ def hamming_distance(seq1: str, seq2: str) -> int:
 
     Returns:
         distance_counter: The calculated hamming distance.
-
     """
-
     # stop if no str type provided
     if not isinstance(seq1, str) or not isinstance(seq2, str):
         raise TypeError("seq1 and/or seq2 are not of type str.")
@@ -56,14 +58,15 @@ def hamming_distance(seq1: str, seq2: str) -> int:
     distance_counter = 0
 
     # use zip to iterate faster and more pythonic
-    for character_left, character_right in zip(seq1, seq2):
+    for character_left, character_right in zip(seq1, seq2, strict=False):
         if character_left != character_right:
             distance_counter += 1
     return distance_counter
 
 
 def is_valid_dna(seq: str) -> bool:
-    """Check if provided dna string contains valid characters
+    """Check if provided dna string contains valid characters.
+
     Currently only 'A', 'C', 'T' and 'G' are checked for.
 
     Args:
@@ -77,7 +80,8 @@ def is_valid_dna(seq: str) -> bool:
 
 
 def rev_comp(dna: str) -> str:
-    """Function which returns the reverse complement of a DNA string
+    """Function which returns the reverse complement of a DNA string.
+
     Args:
         dna: The input DNA string we want to convert
 
@@ -90,19 +94,20 @@ def rev_comp(dna: str) -> str:
 
 
 def is_valid_input_csv(csv_file: Path) -> bool:
-    """Function that tests input csv file given to be in the expected format.
-    We expect the file to have a header with labels 'label', 'barcode'.
-    We expect no empty labels
-    We expect no empty barcodes
+    """Validate that the input CSV file follows the expected format.
+
+    The file must:
+        - Contain the headers 'label' and 'barcode'.
+        - Have no empty labels.
+        - Have no empty barcodes.
 
     Args:
-        csv_file: The input file to use
+        csv_file: Path to the input CSV file.
 
     Returns:
-        bool: Returns a boolean to show if the input is valid or not
-
+        bool: True if the input file is valid, False otherwise.
     """
-    with open(csv_file, "r") as file_handle:
+    with csv_file.open("r") as file_handle:
         # expect the first line to be the header
         header_line = file_handle.readline().strip().lower()
 
@@ -134,7 +139,7 @@ def is_valid_input_csv(csv_file: Path) -> bool:
 
 
 def load_barcodes(input_csv: Path) -> list[tuple[(str, str)]]:
-    """Load in the input csv file and store this as a list of tuples (label, barcode)
+    """Load in the input csv file and store this as a list of tuples (label, barcode).
 
     Args:
         input_csv: The input csv file to load
@@ -148,8 +153,8 @@ def load_barcodes(input_csv: Path) -> list[tuple[(str, str)]]:
         pass
 
     # loop over input, skip header and store as list of tuples
-    barcode_records = list()
-    with open(input_csv, "r") as file_handle:
+    barcode_records = []
+    with input_csv.open("r") as file_handle:
         # skip first row (header)
         next(file_handle)
 
@@ -163,7 +168,7 @@ def load_barcodes(input_csv: Path) -> list[tuple[(str, str)]]:
 
 
 def compare_sample_barcode_list(sample_barcode_list: list) -> dict:
-    """Compare all barcodes with all barcodes and calculate hamming distance
+    """Compare all barcodes with all barcodes and calculate hamming distance.
 
     This an all vs all comparison, so each barcode(or DNA sequence) found is compared against all other barcodes/sequences.
 
@@ -210,17 +215,34 @@ def compare_sample_barcode_list(sample_barcode_list: list) -> dict:
 # main script
 @cli.command()
 def main(
-    input_csv: Path = typer.Argument(help="Pad naar input CSV met kolommen: label,barcode"),
-    max_distance: int = typer.Option(
-        1,
-        "--max-distance",
-        "-d",
-        help="Maximale hamming distance waarvoor output wordt geschreven (default op 1, wat 0 & 1 schrijft).",
-    ),
-    outpath: Path = typer.Option(
-        ".", "--outpath", "-o", help="Directory waar output files worden geschreven (default huidige directory)."
-    ),
+    input_csv: Annotated[
+        Path,
+        typer.Argument(help="Pad naar input CSV met kolommen: label,barcode"),
+    ],
+    max_distance: Annotated[
+        int,
+        typer.Option(
+            "--max-distance",
+            "-d",
+            help="Maximale hamming distance waarvoor output wordt geschreven (default op 1, wat 0 & 1 schrijft).",
+        ),
+    ] = 1,
+    outpath: Annotated[
+        Path,
+        typer.Option(
+            "--outpath",
+            "-o",
+            help="Directory waar output files worden geschreven (default huidige directory).",
+        ),
+    ] = Path(),
 ):
+    """Calculate the Hamming distance between label and barcode sequences provided in a CSV file.
+
+    Args:
+        input_csv: Path to the CSV file containing label and barcode columns.
+        max_distance: Maximum allowed Hamming distance.
+        outpath: Directory where the output files will be saved.
+    """
     # read input
     sample_barcode_list = load_barcodes(input_csv)
 
