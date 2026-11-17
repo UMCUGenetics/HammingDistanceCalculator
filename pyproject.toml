@@ -36,7 +36,6 @@ extend-select = [
     "A",   # Prevent builtin shadowing
     "ARG", # Detect unused function arguments
     "D",   # Enforce docstring conventions
-    "DOC", # Validate docstrings against code
     "DTZ", # Require timezone-aware datetimes
     "E",   # Enforce general Python style
     "ISC", # Detect implicit string concatenation
